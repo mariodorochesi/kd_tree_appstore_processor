@@ -1,5 +1,6 @@
 from typing import List, Dict, Set
 from utils.utils import one_shot_encoding, vectorize
+from kd_tree.KD_Tree import KD_Tree, KD_Node
 # Declaracion de Constantes
 ARCHIVO = 'datos.csv'
 
@@ -55,6 +56,8 @@ if __name__ == "__main__":
     diccionario_content_rating = one_shot_encoding(conjunto_content_rating)
     # Se hace un rewind al archivo.
     archivo_datos.seek(0)
+    # Skip primera linea
+    archivo_datos.readline()
     # Contador de lineas
     contador_lineas = 0
     for linea in archivo_datos:
@@ -83,8 +86,7 @@ if __name__ == "__main__":
             vector = vectorize(linea[3], linea[5], linea[8], 
                             diccionario_content_rating.get(linea[11]),
                             diccionario_generos_codificados.get(linea[12]))
-            print(vector)
+            #print(vector)
         except:
             print('No se ha podido procesar la linea {}'.format(contador_lineas+1))
         contador_lineas +=1
-
