@@ -1,6 +1,7 @@
 from typing import List, Dict, Set
 from utils.utils import one_shot_encoding, vectorize
 from kd_tree.KD_Tree import KD_Tree, KD_Node
+import sys
 # Declaracion de Constantes
 ARCHIVO = 'datos.csv'
 
@@ -49,7 +50,6 @@ if __name__ == "__main__":
         conjunto_generos.add(linea[12])
         # Se agrega el content rating a un conjunto
         conjunto_content_rating.add(linea[11])
-    
     # Se obtiene un diccionario de Generos Codificados con OneShot Encoding
     diccionario_generos_codificados = one_shot_encoding(conjunto_generos)
     # Se obtiene un dicciionario de Content Rating codificados con OneShot Encoding
@@ -82,11 +82,7 @@ if __name__ == "__main__":
         '''
         linea = linea.strip().split(',')
         # Se obtiene el vector utilizando la funcion vectorize definida en utils.py
-        try:
-            vector = vectorize(linea[3], linea[5], linea[8], 
-                            diccionario_content_rating.get(linea[11]),
-                            diccionario_generos_codificados.get(linea[12]))
-            #print(vector)
-        except:
-            print('No se ha podido procesar la linea {}'.format(contador_lineas+1))
+        vector = vectorize(linea[3], linea[5], linea[8], 
+                        diccionario_content_rating.get(linea[11]),
+                        diccionario_generos_codificados.get(linea[12]))
         contador_lineas +=1
