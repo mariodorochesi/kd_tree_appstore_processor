@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 from typing import List, Dict, Set
-from utils.utils import one_shot_encoding, vectorize
+from utils.utils import one_shot_encoding, vectorize, normalize, distance
 from kd_tree.KD_Tree import KD_Tree, KD_Node
 import sys
 # Declaracion de Constantes
@@ -8,7 +9,7 @@ ARCHIVO = 'datos.csv'
 if __name__ == "__main__":
 
     # Se hace la lectura del archivo
-    archivo_datos = open(ARCHIVO, 'r')
+    archivo_datos = open(ARCHIVO, 'r', encoding='utf8')
     # Conjunto de Generos
     conjunto_generos : Set = set()
     # Conjunto de Content Ratings
@@ -60,6 +61,9 @@ if __name__ == "__main__":
     archivo_datos.readline()
     # Contador de lineas
     contador_lineas = 0
+    # Conjunto de vectores
+    lista_vectores : List = list()
+    lista_ids : List = list()
     for linea in archivo_datos:
         '''
             0 : Numeral
@@ -85,4 +89,8 @@ if __name__ == "__main__":
         vector = vectorize(linea[3], linea[5], linea[8], 
                         diccionario_content_rating.get(linea[11]),
                         diccionario_generos_codificados.get(linea[12]))
+        lista_vectores.append(vector)
+        lista_ids.append(linea[1])
         contador_lineas +=1
+    # Se obtiene una Lista Normalizada de np.arrays
+    lista_vectores = normalize(lista_vectores)

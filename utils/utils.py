@@ -1,5 +1,6 @@
-from typing import Set, Dict
-from math import pow
+from typing import Set, Dict, List
+from math import pow, trunc
+import numpy as np
 
 def one_shot_encoding(categories : Set):
     '''
@@ -39,3 +40,48 @@ def vectorize(size_byes, price, user_rating, cont_rating, prime_genre):
         return vector
     except:
         raise Exception('Error al convertir a Lista')
+
+def truncate(number, decimals=0):
+    """
+    Returns a value truncated to a specific number of decimal places.
+    """
+    if not isinstance(decimals, int):
+        raise TypeError("decimal places must be an integer.")
+    elif decimals < 0:
+        raise ValueError("decimal places has to be 0 or more.")
+    elif decimals == 0:
+        return math.trunc(number)
+
+    factor = 10.0 ** decimals
+    return trunc(number * factor) / factor
+
+def distance(vector_a  , vector_b):
+    return np.linalg.norm(vector_a-vector_b)
+
+def normalize(lista_vectores : List):
+    '''
+        Funcion para normalizar la lista de vectores. Para ello se normalizan
+        en base a su maximo, los parametros tamano, precio y rating_usuario.
+    '''
+    lista_tamanos : List = list()
+    lista_precio : List = list()
+    lista_rating_usuario : List = list()
+
+    for i in lista_vectores:
+        lista_tamanos.append(i[0])
+        lista_precio.append(i[1])
+        lista_rating_usuario.append(i[2])
+
+    maximo_tamanos = max(lista_tamanos)
+    maximo_precio = max(lista_precio)
+    maximo_rating_usuario = max(lista_rating_usuario)
+
+    for i in lista_vectores:
+        i[0] = truncate(i[0]/maximo_tamanos,3)
+        i[1] = truncate(i[1]/maximo_precio,3)
+        i[2] = truncate(i[2]/maximo_rating_usuario,3)
+
+    for i in range(len(lista_vectores)):
+        lista_vectores[i] = np.array(lista_vectores[i])
+
+    return lista_vectores

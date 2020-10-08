@@ -23,6 +23,7 @@ class KD_Node:
         self.correlative = correlative
         # Dimension en la que trabaja
         self.dim = len(self.vector)
+        # 
 
     def __str__(self):
         return str(self.vector)
