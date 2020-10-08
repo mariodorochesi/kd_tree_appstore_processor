@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from typing import List, Dict, Set
 from utils.utils import one_shot_encoding, vectorize, normalize, distance
+from utils.aplicacion import Aplicacion
 from kd_tree.KD_Tree import KD_Tree, KD_Node
 import sys
+
 # Declaracion de Constantes
 ARCHIVO = 'datos.csv'
 
@@ -14,8 +16,6 @@ if __name__ == "__main__":
     conjunto_generos : Set = set()
     # Conjunto de Content Ratings
     conjunto_content_rating : Set = set()
-    # Diccinario con correlativo ID:Trackname
-    diccionario_ids_name : Dict = dict()
     # Skip a la primera linea
     archivo_datos.readline()
     '''
@@ -45,8 +45,6 @@ if __name__ == "__main__":
             16 : vpp_lic
         '''
         linea = linea.strip().split(',')
-        # Se hace un mapeo id : nombre
-        diccionario_ids_name[linea[1]] = linea[2]
         # Se agrega el genero a un conjunto
         conjunto_generos.add(linea[12])
         # Se agrega el content rating a un conjunto
@@ -59,11 +57,12 @@ if __name__ == "__main__":
     archivo_datos.seek(0)
     # Skip primera linea
     archivo_datos.readline()
-    # Contador de lineas
-    contador_lineas = 0
     # Conjunto de vectores
     lista_vectores : List = list()
+    # Lista de Aplicaciones
     lista_ids : List = list()
+    # Se crea el KD_Tree
+    kd_tree = KD_Tree()
     for linea in archivo_datos:
         '''
             0 : Numeral
@@ -90,7 +89,17 @@ if __name__ == "__main__":
                         diccionario_content_rating.get(linea[11]),
                         diccionario_generos_codificados.get(linea[12]))
         lista_vectores.append(vector)
-        lista_ids.append(linea[1])
-        contador_lineas +=1
+        lista_ids.append(Aplicacion(linea[1], linea[2],linea[3],
+        linea[5], linea[8], linea[10], linea[11],
+        linea[12], linea[15]))
+
     # Se obtiene una Lista Normalizada de np.arrays
     lista_vectores = normalize(lista_vectores)
+
+    # Ciclo para insertar los vectores normalizados al kd_tree
+    for i in range(len(lista_vectores)):
+        lista_ids[i].vector = lista_vectores[i]
+        kd_tree.insert(lista_vectores[i], lista_ids[i])
+
+
+    kd_tree.k_nearest(1,lista_vectores[0])

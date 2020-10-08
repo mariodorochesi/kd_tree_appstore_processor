@@ -1,4 +1,7 @@
 from typing import List
+from utils.utils import distance
+import numpy as np
+import copy
 
 class KD_Node:
     '''
@@ -20,10 +23,9 @@ class KD_Node:
         # Vector de Informacion
         self.vector = vector
         # Correlativo al Nodo
-        self.correlative = correlative
-        # Dimension en la que trabaja
-        self.dim = len(self.vector)
-        # 
+        self.correlative = list()
+        if correlative is not None:
+            self.correlative.append(correlative)
 
     def __str__(self):
         return str(self.vector)
@@ -36,9 +38,70 @@ class KD_Tree:
     '''
     def __init__(self, root : KD_Node =None):
         self.root = root
+        self.nodes_dimension = 1
+        self.size = 0
 
-    def insert_record(self, vector : List, correlative = None):
-        if self.root == None:
-            self.root = KD_Node(vector, correlative)
-            return self.root
-            
+    def insert_record(self, root, vector, depth, correlative = None ):
+        '''
+            root : Nodo desde el cual se compara
+            vector : Vector que esta siendo ingresado al arbol
+            depth : Profundidad de comparasion del vector
+            correlative : Un dato para identificar al nodo
+
+            Esta funcion trabaja de manera recursiva comparando dimensiones 
+            y nodos.
+
+        '''
+
+        # Si el nodo de comparacion es vacio
+        if root is None:
+            # Se crea un nuevo nodo
+            root = KD_Node(vector, correlative)
+            # Si el arbol se encuentra vacio entonces se agrega a la raiz
+            if self.size == 0:
+                self.root = root
+                self.size +=1
+            # Se retorna el nodo creado
+            return root
+
+        # Se obtiene la dimension del vector en la cual se va a comparar
+        current_dimension = depth % self.nodes_dimension
+
+        # Si la dimension del vector es menor a su padre entonces se coloca a la izquierda
+        if vector[current_dimension] < root.vector[current_dimension]:
+            root.left_node = self.insert_record(root.left_node, vector,depth +1, correlative)
+        # Sino se coloca a la derecha
+        else:
+            root.right_node = self.insert_record(root.right_node, vector, depth+1, correlative)
+        
+        # Se retorna el nodo colocado
+        return root
+        
+    def insert(self,vector, correlative = None):
+        '''
+            Esta funcion utiliza mayoritariamente a la funcion recurisva de arriba
+        '''
+        if self.size == 0:
+            self.nodes_dimension = len(vector)
+            return self.insert_record(None, vector, 0, correlative)
+        self.size +=1
+        return self.insert_record(self.root, vector, 0, correlative)
+
+    def k_nearest(self, cantidad_vecinos, vector):
+
+        if cantidad_vecinos > self.size:
+            raise Exception("Se esta solicitando una cantidad mayor a los nodos del arbol")
+        
+        vecinos = list()
+
+        nodos_visitados = set()
+
+        arbol_copia = copy.deepcopy(self)
+
+        arbol_copia.insert(vector)
+
+        s = list()
+
+
+        return None
+        
