@@ -2,6 +2,7 @@ from typing import List
 from utils.utils import distance
 import numpy as np
 import copy
+import bisect
 
 class KD_Node:
     '''
@@ -87,21 +88,46 @@ class KD_Tree:
         self.size +=1
         return self.insert_record(self.root, vector, 0, correlative)
 
-    def k_nearest(self, cantidad_vecinos, vector):
+
+    def k_nearest(self, cantidad_vecinos, vector, id):
+        '''
+            1 .- Orden en que se ingresan en la pila. Comparar dimension y decidie
+            izquierda o derecha.
+            2 .- Verificar si el subarbol puede contener vecinos cercanos. Para eso se
+            calcula la distancia en la dimension de corte.
+        '''
 
         if cantidad_vecinos > self.size:
             raise Exception("Se esta solicitando una cantidad mayor a los nodos del arbol")
         
+        nodes = list()
+        nodes.append(self.root)
+
         vecinos = list()
+        distancia_maxima = 10000
 
-        nodos_visitados = set()
-
-        arbol_copia = copy.deepcopy(self)
-
-        arbol_copia.insert(vector)
-
-        s = list()
-
-
-        return None
+        while len(nodes) != 0:
         
+            node = nodes.pop(len(nodes)-1)
+
+            distancia = distance(vector, node.vector)
+            if distancia < distancia_maxima and node.correlative[0].id != id:
+                if len(vecinos) < cantidad_vecinos:
+                    vecinos.append((distancia,node.correlative))
+                else:
+                    vecinos.pop(-1)
+                    vecinos.append((distancia,node.correlative))
+                    vecinos = sorted(vecinos, key= lambda x : x[0])
+                aux_max = 0
+                for i in vecinos:
+                    if i[0] > aux_max:
+                        aux_max = i[0]
+                distancia_maxima = aux_max
+
+
+            if node.left_node is not None:
+                nodes.append(node.left_node)
+            if node.right_node is not None:
+                nodes.append(node.right_node)
+
+        return vecinos

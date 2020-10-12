@@ -1,6 +1,10 @@
 from typing import Set, Dict, List
 from math import pow, trunc
 import numpy as np
+import os
+
+def cls():
+    os.system('cls' if os.name=='nt' else 'clear')
 
 def one_shot_encoding(categories : Set):
     '''
@@ -77,11 +81,43 @@ def normalize(lista_vectores : List):
     maximo_rating_usuario = max(lista_rating_usuario)
 
     for i in lista_vectores:
-        i[0] = truncate(i[0]/maximo_tamanos,3)
-        i[1] = truncate(i[1]/maximo_precio,3)
-        i[2] = truncate(i[2]/maximo_rating_usuario,3)
+        i[0] = truncate(0.5*i[0]/maximo_tamanos,3)
+        i[1] = truncate(2*i[1]/maximo_precio,3)
+        i[2] = truncate(1.5*i[2]/maximo_rating_usuario,3)
 
     for i in range(len(lista_vectores)):
         lista_vectores[i] = np.array(lista_vectores[i])
 
     return lista_vectores
+
+def normalize_excluded(lista_vectores : List, vector):
+    '''
+        Metodo que normaliza un vector en base a una lista de vectores.
+        Hace lo mismo del caso anterior pero no altera la lista de vectores,
+        solamente altera el vector.
+    '''
+    lista_tamanos : List = list()
+    lista_precio : List = list()
+    lista_rating_usuario : List = list()
+
+    for i in lista_vectores:
+        lista_tamanos.append(i[0])
+        lista_precio.append(i[1])
+        lista_rating_usuario.append(i[2])
+
+    maximo_tamanos = max(lista_tamanos)
+    maximo_precio = max(lista_precio)
+    maximo_rating_usuario = max(lista_rating_usuario)
+    vector[0] = truncate(0.5 * (vector[0]/maximo_tamanos),3)
+    vector[1] = truncate(2 * vector[1]/maximo_precio, 3)
+    vector[2] = truncate(1.5 * vector[2]/maximo_rating_usuario, 3)
+
+    return vector
+
+def menu():
+    cls()
+    print('Seleccione una de las opciones disponibles.')
+    print('1.- Mostrar informacion de una aplicacion en especifico.')
+    print('2.- Mostrar informacion de 10 aplicaciones mas parecidas a una dada por id.')
+    print('3.- Mostrar informacion de 10 aplicaciones mas parecidas segun vector.')
+    print('0.- Cerrar programa.')

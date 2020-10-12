@@ -19,8 +19,6 @@ class Aplicacion:
             f"Tamano : {self.size_bytes} bytes\n"\
             f"Precio : {self.price}\n"\
             f"User Rating : {self.user_rating}\n"\
-            f"Version : {self.version}\n"\
             f"Content Rating : {self.cont_rating}\n"\
             f"Genero : {self.prime_genre}\n"\
-            f"Idiomas Soportados : {self.idiomas}\n"\
             f"Vector Caracteristicas Normalizado: {self.vector}"
