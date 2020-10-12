@@ -64,6 +64,10 @@ if __name__ == "__main__":
     # Conjunto de vectores
     lista_vectores : List = list()
     lista_ids : List = list()
+    
+    # Nodes
+    lista_nodes : List= list()
+
     for linea in archivo_datos:
         '''
             0 : Numeral
@@ -92,5 +96,34 @@ if __name__ == "__main__":
         lista_vectores.append(vector)
         lista_ids.append(linea[1])
         contador_lineas +=1
+        
     # Se obtiene una Lista Normalizada de np.arrays
     lista_vectores = normalize(lista_vectores)
+    root = KD_Node(lista_vectores.pop(), 0, 0)
+    
+    tree = KD_Tree(root)
+    id = 0
+    node = KD_Node(lista_vectores[10], 9, 2)
+    
+    node2 = KD_Node(lista_vectores[11], 8, 3)
+    node3 = KD_Node(lista_vectores[12], 7, 4)
+    node4 = KD_Node(lista_vectores[13], 6, 5)
+    '''
+    
+    print(root.vector)
+    tree.buildTree(root,node)
+    tree.buildTree(root,node2)
+    tree.buildTree(root,node3)
+    tree.buildTree(root,node4)
+
+    tree.printTree(root)
+    '''
+    
+    for n in lista_vectores:
+        node = KD_Node(n, id, id)
+        tree.buildTree(root,node)
+        id+=1
+
+    
+    tree.KNN(root,10)
+    
