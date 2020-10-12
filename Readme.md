@@ -53,7 +53,7 @@ Para el calculo de distancia entre dos vectores se utiliza la distancia euclidea
 
 ## **Uso**
 
-Existen 4 opciones en el menu, las cuales se describen a continuacion.
+Existen 3 opciones en el menu, las cuales se describen a continuacion.
 
 ### Opcion 1
 
