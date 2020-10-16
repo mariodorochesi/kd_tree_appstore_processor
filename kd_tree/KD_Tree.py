@@ -108,11 +108,11 @@ class KD_Tree:
 
         finalTime = clock()
         iterTime = finalTime - initialTime 
-        
+        '''
         for n in N:
             r.append(distance(n.vector,node.vector))
-        
         print(r)
+        '''
         
         
         return [N,[iterTime,iterCount]]

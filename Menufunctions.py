@@ -25,11 +25,12 @@ def searchByList(list_nodes, toSearch, cant_nodes):
 
     finalTime = clock()
     iterationTime = finalTime - timeInit
-    
+    '''
     for n in similar:
         r.append(distance(n.vector, toSearch.vector))
         
     print(r)
+    '''
     
     return [similar,[iterationTime,iterCount]]
     
