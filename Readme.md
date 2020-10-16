@@ -7,6 +7,7 @@ Este repositorio considera la implementacion de un algoritmo KNN para la búsqu
 python3 main.py
 ```
 
+
 ## **Algoritmo Propuesto**
 
 ### **Vector de Caracteristicas**
@@ -51,13 +52,13 @@ Finalmente se realiza un proceso de ponderación de los datos, para agregar un 
 ### **Distancia**
 Para el calculo de distancia entre dos vectores se utiliza la distancia euclideana.
 
-## Uso del Algoritmo
+## **Uso del Algoritmo**
 
 El algoritmo inicialmente le solicita al usuario que escoja una de las 3 acciones propuestas. 
 
-### Opción 1
+### ***Opción 1***
 El usuario podrá ingresar un ID correspondiente a una APP en especifico, y podrá obtener todo el detalle relacionado a ella, como lo es su nombre, dicho ID, Size Bytes, etc. 
-
+```
 Ingrese el Id a buscar:
 Id: 364740856
 ID ENCONTRADO, APP NAME: Dictionary.com Dictionary & Thesaurus for iPad
@@ -72,12 +73,12 @@ Genero: Reference
 [0.016 0.019 0.9   0.    0.    0.    1.    0.    0.    0.    0.    0.  0.    1.    0.    0.    0.    0.    0.    0.    0.    0.    0.    0.
  0.    0.    0.    0.    0.    0.   ]
 -------------------------------
+```
 
-
-### Opción 2
+### ***Opción 2***
 
 A partir de un ID relacionado a una APP que será ingresado por el usuario, el algoritmo entregará la 10 aplicación más parecidas a ella de acuerdo a las características que esta contiene. En efecto:
-
+```
 Ingrese el Id a buscar:
 Id: 284666222
 ID ENCONTRADO, APP NAME:PCalc - The Best Calculator
@@ -103,12 +104,12 @@ Genero: Games
  0.    0.    0.    0.    0.    0.   ]
 -------------------------------
 Y bajo el mismo formato, se presentarán las siguientes sugerencias.
-
-### Opcion 3
+```
+### ***Opcion 3***
 
 Análogo al punto 2, esta opcion entrega las características relacionadas a 10 app's que, a diferencia del punto anterior, aquí se define un set de caracteristicas propias por las cuales se desea tener información. En efecto.
 
-
+```
 Ingrese el tamano de bytes: 100788224
 Ingrese un precio estimado: 3.99
 Ingrese un rating estimado: 4.5
@@ -163,3 +164,4 @@ Genero: Finance
 [0.002 0.016 0.9   0.    0.    1.    0.    0.    0.    0.    0.    0.  0.    1.    0.    0.    0.    0.    0.    0.    0.    0.    0.    0.
  0.    0.    0.    0.    0.    0.   ]
 -------------------------------------
+```
