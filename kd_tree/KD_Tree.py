@@ -97,11 +97,6 @@ class KD_Tree:
                 S.append(n_actual.right_node)
             if(n_actual.left_node is not None):
                 S.append(n_actual.left_node)
-            
-        #
-        # for i in N:
-        #    print(distance(i.vector, node.vector))
-        
         return N
     
     

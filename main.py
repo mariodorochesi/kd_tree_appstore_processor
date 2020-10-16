@@ -13,7 +13,8 @@ def printInstruccion():
     print("2- Informacion sobre 10 aplicaciones más parecidas a otra")
     print("3- Informacion sobre 10 aplicaciones más parecidas respecto a unos atributos")
     print("Presiona 0 para salir")
-
+    
+#Opcion 2
 def searchById(lista_vectores, dictName):
     accept = True
     index = 0
@@ -23,7 +24,7 @@ def searchById(lista_vectores, dictName):
         id = int(input("Id: "))
         name = None
         count = 0
-
+        
         for v in dictName.keys():
             if(id == int(v)):
                 accept = False
@@ -37,7 +38,7 @@ def searchById(lista_vectores, dictName):
     print("ID ENCONTRADO, APP NAME:"+name)
     return KD_Node(lista_vectores[index],id)
         
-
+#Opcion 3
 def searchGroupByCart():
     tamByt = int(input("Ingrese el tamano de bytes: "))
     precio = float(input("Ingrese un precio estimado: "))
@@ -58,37 +59,34 @@ def searchGroupByCart():
         print(f"{count}) {i}")
     
     genero = int(input("Ingrese el genero adecuado: "))
-
     cont_rating = diccionario_content_rating[list(diccionario_content_rating.keys())[cont_rating-1]]
-    
     genero = diccionario_generos_codificados[list(diccionario_generos_codificados.keys())[genero-1]]
-
     vector = vectorize(tamByt, precio, user_rating, cont_rating, genero)
-    
     vector = normalize_excluded(lista_vectores_no_normalizados, vector)
 
     final = KD_Node(vector, len(vector))
     return final
 
+
+
 def printSimilars():
-    count = 0
-    element = []
+    count = 1
+    print("-----------------------------------------")
     for s in similar:
+        i = s.id
+        element = diccionario_aplicaciones.get(i)
+        print(str(count)+": "+ element[1] )
+        print("ID: " + element[0])
+        print("Size Bytes:"+ element[2])
+        print("Currency: "+element[3])
+        print("Price: "+element[5])
+        print("Rating Count: "+element[6])
+        print("Genero: "+element[7])
+        print(s)
+        print("-------------------------------------")
         count+=1 
-        element = returnCodName(s.id)
-        print("Similitud n"+str(count)+": "+ element[1] )
-        
-def returnCodName(id):
-    index = 0
-    for i in diccionario_ids_name.keys():
-        if(index == id):
-            return [i,diccionario_ids_name[i]]    
-        index +=1 
-
-
 
 if __name__ == "__main__":
-
     # Se hace la lectura del archivo
     archivo_datos = open(ARCHIVO, 'r', encoding='utf8')
     # Conjunto de Generos
@@ -101,6 +99,23 @@ if __name__ == "__main__":
     archivo_datos.readline()
     # Index idLine - idName
     translateId: Dict = dict()
+    # Instruct data
+    # Diccionario de Aplicaciones
+    diccionario_aplicaciones : Dict = dict()
+
+    # Contador de lineas
+    contador_lineas = 0
+    # Conjunto de vectores
+    lista_vectores : List = list()
+    lista_ids : List = list()
+    # Nodes
+    lista_nodes : List= list()
+
+    # Configuraciones del menu
+    nKNN = 0
+    id = 0
+    similar = []
+    running = True
 
     '''
         Se hace un procesamiento inicial del texto para generar:
@@ -146,14 +161,6 @@ if __name__ == "__main__":
     # Skip primera linea
     archivo_datos.readline()
     
-    # Contador de lineas
-    contador_lineas = 0
-    # Conjunto de vectores
-    lista_vectores : List = list()
-    lista_ids : List = list()
-    # Nodes
-    lista_nodes : List= list()
-
     for linea in archivo_datos:
         '''
             0 : Numeral
@@ -181,30 +188,29 @@ if __name__ == "__main__":
                         diccionario_generos_codificados.get(linea[12]))
         lista_vectores.append(vector)
         lista_ids.append(linea[1])
-        contador_lineas +=1
-        
-    ########################### COMIENZA EL MENU
-    print(len(lista_vectores))
-    printInstruccion()
-    running = True
-    nKNN = 0
-    similar = []
 
+        aplicacion =  [ linea[1], linea[2],linea[3],
+                        linea[5], linea[8], linea[10], linea[11],
+                        linea[12], linea[15]]
+
+        diccionario_aplicaciones[int(linea[1])] = aplicacion
+        
     # Se obtiene una Lista Normalizada de np.arrays
     lista_vectores_no_normalizados = cp.deepcopy(lista_vectores)
     lista_vectores = normalize(lista_vectores)
-    root = KD_Node(lista_vectores.pop(),0)
-    
-    #Se crea el Arbol KD
-    tree = KD_Tree(root)
 
-    id = 1
+
+    root = KD_Node(lista_vectores.pop(), int(lista_ids[0]))
+    tree = KD_Tree(root) #Se crea el Arbol KD
+    id += 1
+
     for n in lista_vectores:
-        node = KD_Node(n,id)
+        node = KD_Node(n, int(lista_ids[id]))
         tree.buildTree(node)
         id+=1
-    
+        
     while(running):
+        printInstruccion()
         option = int(input("Opcion "))
     
         while(option < 0 or option > 3):
@@ -220,18 +226,21 @@ if __name__ == "__main__":
             #POR ID
             nKNN = 1
             toSearch = searchById(lista_vectores, diccionario_ids_name)
-            similar = tree.KNN(toSearch,nKNN)
-
+            similar = []
+            similar.append(toSearch)     
+            
+            
         elif(option == 2):
             #POR ID
             nKNN = 10
             toSearch = searchById(lista_vectores, diccionario_ids_name)
-            similar = tree.KNN(toSearch,nKNN)
-
+            similar = tree.KNN(toSearch,nKNN)     
+            
+            
         else:
             #POR GRUPO DE CARACTERISTICAS
             nKNN = 10
             toSearch = searchGroupByCart()
-        
-        similar = tree.KNN(toSearch,nKNN)     
+            similar = tree.KNN(toSearch,nKNN)     
+            
         printSimilars()
