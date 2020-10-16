@@ -61,18 +61,19 @@ El usuario podrá ingresar un ID correspondiente a una APP en especifico, y podr
 ```
 Ingrese el Id a buscar:
 Id: 364740856
-ID ENCONTRADO, APP NAME: Dictionary.com Dictionary & Thesaurus for iPad
--------------------------------
-0: Dictionary.com Dictionary & Thesaurus for iPad
+ID ENCONTRADO, APP NAME:Dictionary.com Dictionary & Thesaurus for iPad      
+-----------------------------------------
+1: Dictionary.com Dictionary & Thesaurus for iPad
 ID: 364740856
 Size Bytes:165748736
 Currency: 0
 Price: 4
 Rating Count: 4+
 Genero: Reference
-[0.016 0.019 0.9   0.    0.    0.    1.    0.    0.    0.    0.    0.  0.    1.    0.    0.    0.    0.    0.    0.    0.    0.    0.    0.
+[0.041 0.    0.9   0.    1.    0.    0.    1.    0.    0.    0.    0.       
+ 0.    0.    0.    0.    0.    0.    0.    0.    0.    0.    0.    0.       
  0.    0.    0.    0.    0.    0.   ]
--------------------------------
+-------------------------------------
 ```
 
 ### ***Opción 2***
@@ -80,29 +81,31 @@ Genero: Reference
 A partir de un ID relacionado a una APP que será ingresado por el usuario, el algoritmo entregará la 10 aplicación más parecidas a ella de acuerdo a las características que esta contiene. En efecto:
 ```
 Ingrese el Id a buscar:
-Id: 284666222
-ID ENCONTRADO, APP NAME:PCalc - The Best Calculator
--------------------------------
-0: Dictionary.com Dictionary & Thesaurus for iPad
-ID: 364740856
-Size Bytes:165748736
+Id: 687877464
+ID ENCONTRADO, APP NAME:Stop - Fun Categories Word Game
+-----------------------------------------
+1: 暴风影音-BaoFeng Player
+ID: 538248967
+Size Bytes:83532800
 Currency: 0
-Price: 4
-Rating Count: 4+
-Genero: Reference
-[0.016 0.019 0.9   0.    0.    0.    1.    0.    0.    0.    0.    0.  0.    1.    0.    0.    0.    0.    0.    0.    0.    0.    0.    0.
+Price: 5.2.0
+Rating Count: 17+
+Genero: Entertainment
+[0.026 0.    0.9   0.    1.    0.    0.    0.    1.    0.    0.    0.
+ 0.    0.    0.    0.    0.    0.    0.    0.    0.    0.    0.    0.
  0.    0.    0.    0.    0.    0.   ]
--------------------------------
-1: Angry Birds Space
-ID: 499511971
-Size Bytes:161200128
-Currency: 0
-Price: 2.2.12
+-------------------------------------
+3: Zen Brush 2
+ID: 1012274888
+Size Bytes:69114880
+Currency: 2.99
+Price: 1.12
 Rating Count: 4+
-Genero: Games
-[0.02  0.016 0.9   0.    0.    0.    1.    0.    0.    0.    0.    0.  0.    1.    0.    0.    0.    0.    0.    0.    0.    0.    0.    0.
+Genero: Entertainment
+[0.026 0.    0.9   0.    1.    0.    0.    0.    1.    0.    0.    0.
+ 0.    0.    0.    0.    0.    0.    0.    0.    0.    0.    0.    0.
  0.    0.    0.    0.    0.    0.   ]
--------------------------------
+-------------------------------------
 Y bajo el mismo formato, se presentarán las siguientes sugerencias.
 ```
 ### ***Opcion 3***
@@ -165,3 +168,20 @@ Genero: Finance
  0.    0.    0.    0.    0.    0.   ]
 -------------------------------------
 ```
+
+### ***Opcion 4*** 
+
+Finalmente, a partir de un ID ingresado por el usuario, el algoritmo entrega los elementos más parecidos con el, sin embargo, los entrega realizando contrastes entre una lista con nodos y KD Tree. En efecto:
+```
+Ingrese el Id a buscar:
+Id: 364740856
+ID ENCONTRADO, APP NAME:Dictionary.com Dictionary & Thesaurus for iPad
+INFORMACION USANDO KDD TREE
+- Tiempo de busqueda estimado: 0.5465000000000001
+- Cantidad de iteraciones: 82
+INFORMACION USANDO LISTA
+- Tiempo de busqueda estimado: 0.5499879
+- Cantidad de iteraciones: 47
+```
+
+Si bien diferencia de tiempo es diferencial, se logra obtener que por medio de KDD Tree se realizan más cambios en comparación a las listas con nodos, sin embargo, esto puede ocurrir por la simplicidad que es escogido el nodo root del arbol, por lo cual, es un parámetro perfectible. Notar también que a pesar de todo, el arbol es recorrido completamente.

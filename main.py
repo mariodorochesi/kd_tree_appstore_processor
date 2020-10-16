@@ -2,8 +2,11 @@
 from typing import List, Dict, Set
 from utils.utils import one_shot_encoding, vectorize, normalize, distance, normalize_excluded
 from kd_tree.KD_Tree import KD_Tree, KD_Node
+from Menufunctions import searchByList
 import sys
 import copy as cp
+
+
 # Declaracion de Constantes
 ARCHIVO = 'datos.csv'
 
@@ -12,6 +15,7 @@ def printInstruccion():
     print("1- Informacion de una aplicacion")
     print("2- Informacion sobre 10 aplicaciones más parecidas a otra")
     print("3- Informacion sobre 10 aplicaciones más parecidas respecto a unos atributos")
+    print("4- Comparación KDTree vs Lista de nodos")
     print("Presiona 0 para salir")
     
 #Opcion 2
@@ -21,20 +25,17 @@ def searchById(lista_vectores, dictName):
     
     while(accept):
         print("Ingrese el Id a buscar:")
-        id = int(input("Id: "))
+        id = input("Id: ")
         name = None
-        count = 0
         
-        for v in dictName.keys():
-            if(id == int(v)):
-                accept = False
-                name = dictName[v]
-                index = count
-            count+=1
+        if(dictName.get(id) is not None ):
+            accept = False
+            name = dictName.get(id)
+            index = int(lista_ids.index(id))
+            id = int(id)
+        else: 
+            print("ID no valido, ingreselo nuevamente")
 
-        if(name is None):
-            print("ID no valido, ingreselo nuevamente") 
-    
     print("ID ENCONTRADO, APP NAME:"+name)
     return KD_Node(lista_vectores[index],id)
         
@@ -68,13 +69,12 @@ def searchGroupByCart():
     return final
 
 
-
 def printSimilars():
-    count = 1
+    count = 0
     print("-----------------------------------------")
     for s in similar:
-        i = s.id
-        element = diccionario_aplicaciones.get(i)
+        count+=1 
+        element = diccionario_aplicaciones.get(s.id)
         print(str(count)+": "+ element[1] )
         print("ID: " + element[0])
         print("Size Bytes:"+ element[2])
@@ -186,34 +186,36 @@ if __name__ == "__main__":
         vector = vectorize(linea[3], linea[5], linea[8], 
                         diccionario_content_rating.get(linea[11]),
                         diccionario_generos_codificados.get(linea[12]))
-        lista_vectores.append(vector)
-        lista_ids.append(linea[1])
-
+        
         aplicacion =  [ linea[1], linea[2],linea[3],
                         linea[5], linea[8], linea[10], linea[11],
                         linea[12], linea[15]]
-
+        
+        lista_vectores.append(vector)
+        lista_ids.append(linea[1])
         diccionario_aplicaciones[int(linea[1])] = aplicacion
         
     # Se obtiene una Lista Normalizada de np.arrays
     lista_vectores_no_normalizados = cp.deepcopy(lista_vectores)
     lista_vectores = normalize(lista_vectores)
 
-
-    root = KD_Node(lista_vectores.pop(), int(lista_ids[0]))
-    tree = KD_Tree(root) #Se crea el Arbol KD
-    id += 1
-
+    #Creacion KD Tree
     for n in lista_vectores:
-        node = KD_Node(n, int(lista_ids[id]))
-        tree.buildTree(node)
-        id+=1
+        if(id == 0):
+            root = KD_Node(lista_vectores[id], int(lista_ids[id]))
+            tree = KD_Tree(root) 
+            lista_nodes.append(root)
+        else:
+            node = KD_Node(n, int(lista_ids[id]))
+            tree.buildTree(node)
+            lista_nodes.append(node)
+        id+=1 
         
     while(running):
         printInstruccion()
         option = int(input("Opcion "))
     
-        while(option < 0 or option > 3):
+        while(option < 0 or option > 4):
             print("Opcion no aceptada, intente nuevamente")
             option = int(input("Opcion "))
         
@@ -223,24 +225,49 @@ if __name__ == "__main__":
             sys.exit(-1)
 
         elif(option == 1):
-            #POR ID
+            #IMPRIMIR RESULTADOS
             nKNN = 1
             toSearch = searchById(lista_vectores, diccionario_ids_name)
             similar = []
             similar.append(toSearch)     
-            
-            
+            printSimilars()
+                
         elif(option == 2):
             #POR ID
             nKNN = 10
             toSearch = searchById(lista_vectores, diccionario_ids_name)
-            similar = tree.KNN(toSearch,nKNN)     
+            p = tree.KNN(toSearch,nKNN)
+            similar = p[0]     
+            printSimilars()
             
-            
-        else:
+        elif(option == 3):
             #POR GRUPO DE CARACTERISTICAS
             nKNN = 10
             toSearch = searchGroupByCart()
-            similar = tree.KNN(toSearch,nKNN)     
+            p = tree.KNN(toSearch,nKNN)
+            similar = p[0]    
+            printSimilars() 
+
+        else:
+            #Mostrar comparaciones
+            nKNN = 10
+            toSearch = searchById(lista_vectores, diccionario_ids_name)
             
-        printSimilars()
+            #PARA KD TREE
+            p = tree.KNN(toSearch,nKNN)
+            similar = p[0]
+            time = p[1][0]
+            iterCount = p[1][1]
+            print("INFORMACION USANDO KDD TREE ")
+            print("- Tiempo de busqueda estimado: "+ str(time) )
+            print("- Cantidad de iteraciones: " + str(iterCount))
+            
+            #PARA UNA LISTA DE NODOS
+            p = searchByList(lista_nodes,toSearch, nKNN)
+            similar = p[0]
+            time = p[1][0]
+            iterCount = p[1][1]
+            print("INFORMACION USANDO LISTA ")
+            print("- Tiempo de busqueda estimado: "+ str(time) )
+            print("- Cantidad de iteraciones: " + str(iterCount))
+        

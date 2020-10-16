@@ -1,5 +1,6 @@
 from typing import List
 from utils.utils import distance
+from time import clock
 
 class KD_Node:
     '''
@@ -44,8 +45,9 @@ class KD_Tree:
             Node = self.root
 
         #profundidad de la comparación
-        index = (Node.deep)%(Node.dim)
-        NewNode.deep = Node.deep+1 
+        index = (Node.deep)
+        
+        NewNode.deep = (Node.deep+1)%(Node.dim)
 
         #Se agrega un nodo a la derecha
         if(Node.vector[index] > NewNode.vector[index]):
@@ -66,72 +68,51 @@ class KD_Tree:
     def KNN(self, node, n):
         N = []
         S = []
-        S.append(self.root)
+        r = []
+        iterCount = 0
         max_val = 1000000000000000000
+        initialTime = clock()
+        S.append(self.root)
 
         while(len(S) > 0):
             n_actual = S.pop()
+            x = n_actual.deep
 
             #Distancia entre el nodo actual del arbol y el nodo que se desea buscar
             d = distance(node.vector,n_actual.vector)
             
             #Se agrega el nodo al vecindario
-            if(len(N) < n):
+            if(len(N) < n and d!=0):
                 N.append(n_actual)
+
             else: 
-                if(d > 0.0 and d < max_val):
+                if(d!=0.0 and d < max_val):
                     N.pop()
                     N.append(n_actual)
-                    N = sorted(N, key = lambda x: distance(x.vector,node.vector) )
-            
-                    #Se busca el actual mayor
-                aux_max = 0 
-                    
-                for i in N:
-                    if distance(i.vector, n_actual.vector) > aux_max:
-                        aux_max = distance(i.vector, n_actual.vector)
-                max_val = aux_max
+                    iterCount +=1
 
             #Se agregan nuevos hijos
-            if(n_actual.right_node is not None):
-                S.append(n_actual.right_node)
-            if(n_actual.left_node is not None):
-                S.append(n_actual.left_node)
-        return N
-    
-    
-    def printTree(self,node=None):
-        if(node is None):
-            print("ROOT: "+str(self.root.id))
-            print(self.root.vector)
+            if( node.vector[x] >= n_actual.vector[x]):
+                if(n_actual.right_node is not None):
+                    S.append(n_actual.right_node)
+                if(n_actual.left_node is not None):
+                    S.append(n_actual.left_node)
+            else:
+                if(n_actual.left_node is not None):
+                    S.append(n_actual.left_node)
+                if(n_actual.right_node is not None):
+                    S.append(n_actual.right_node)
 
-            if(self.root.left_node is not None):
-                print("FROM " + str(self.root.id) + " LEFT SON " + str(self.root.left_node.id))
-                print(self.root.left_node.vector)
-                self.printTree(self.root.left_node)
-            
-            if(self.root.right_node is not None):
-                print("FROM " + str(self.root.id) +" RIGHT SON "+str(self.root.right_node.id))
-                print(self.root.right_node)    
-                
-            if(self.root.left_node is not None):
-                self.printTree(self.root.left_node)
-            
-            if(self.root.right_node is not None):
-                self.printTree(self.root.right_node)
+            N = sorted(N, key = lambda x: distance(x.vector,node.vector) )
+            max_val = distance(N[-1].vector,node.vector)        
 
-        else:
-            if(node.left_node is not None):
-                print("FROM " + str(node.id) +" LEFT SON "+ str(node.left_node.id))
-                print(node.left_node.vector)
-                
-            if(node.right_node is not None):
-                print("FROM " + str(node.id) +" RIGHT SON "+str(node.right_node.id))
-                print(node.right_node.vector)
-                
-            if(node.left_node is not None):
-                self.printTree(node.left_node)
-            
-            if(node.right_node is not None):
-                self.printTree(node.right_node)
-            
+        finalTime = clock()
+        iterTime = finalTime - initialTime 
+        
+        for n in N:
+            r.append(distance(n.vector,node.vector))
+        
+        print(r)
+        
+        
+        return [N,[iterTime,iterCount]]
