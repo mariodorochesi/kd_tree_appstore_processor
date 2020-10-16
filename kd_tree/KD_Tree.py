@@ -107,7 +107,7 @@ class KD_Tree:
             max_val = distance(N[-1].vector,node.vector)        
 
         finalTime = clock()
-        iterTime = finalTime - initialTime 
+        iterTime = finalTime - initialTime g
         '''
         for n in N:
             r.append(distance(n.vector,node.vector))
